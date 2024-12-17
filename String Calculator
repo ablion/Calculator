@@ -1,0 +1,50 @@
+public class StringCalculator {
+    public int add(String numbers) {
+        if (numbers == null || numbers.isEmpty()) {
+            return 0;
+        }
+
+        String delimiter = ","; // Default delimiter
+        String numbersList = numbers;
+
+        if (numbers.startsWith("//")) {
+            // Extract custom delimiter
+            int delimiterEnd = numbers.indexOf('\n');
+            delimiter = numbers.substring(2, delimiterEnd);
+            numbersList = numbers.substring(delimiterEnd + 1);
+        }
+
+        // Replace newlines with the delimiter to standardize
+        numbersList = numbersList.replace("\n", delimiter);
+
+        // Split by the delimiter and parse numbers
+        String[] numberTokens = numbersList.split(delimiter);
+        int sum = 0;
+        List<Integer> negativeNumbers = new ArrayList<>();
+
+        for (String token : numberTokens) {
+            if (!token.isEmpty()) { // Ignore empty tokens
+                int num = Integer.parseInt(token);
+                if (num < 0) {
+                    negativeNumbers.add(num);
+                }
+                sum += num;
+            }
+        }
+
+        if (!negativeNumbers.isEmpty()) {
+            throw new IllegalArgumentException("negative numbers not allowed: " + negativeNumbers);
+        }
+
+        return sum;
+    }
+
+    public static void main(String[] args) {
+        StringCalculator calculator = new StringCalculator();
+        System.out.println(calculator.add("")); // Output: 0
+        System.out.println(calculator.add("1")); // Output: 1
+        System.out.println(calculator.add("1,5")); // Output: 6
+        System.out.println(calculator.add("1\n2,3")); // Output: 6
+        System.out.println(calculator.add("//;\n1;2")); // Output: 3
+    }
+}
